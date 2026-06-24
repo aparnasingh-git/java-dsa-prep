@@ -1,0 +1,50 @@
+import java.util.*;
+
+class Solution {
+    public String minWindow(String s, String t) {
+        if (s == null || t == null || s.length() < t.length()) {
+            return "";
+        }
+
+        int[] need = new int[128];
+
+        for (char c : t.toCharArray()) {
+            need[c]++;
+        }
+
+        int left = 0;
+        int minLen = Integer.MAX_VALUE;
+        int start = 0;
+        int required = t.length();
+
+        for (int right = 0; right < s.length(); right++) {
+            char rightChar = s.charAt(right);
+
+            if (need[rightChar] > 0) {
+                required--;
+            }
+
+            need[rightChar]--;
+
+            while (required == 0) {
+                int currentLen = right - left + 1;
+
+                if (currentLen < minLen) {
+                    minLen = currentLen;
+                    start = left;
+                }
+
+                char leftChar = s.charAt(left);
+                need[leftChar]++;
+
+                if (need[leftChar] > 0) {
+                    required++;
+                }
+
+                left++;
+            }
+        }
+
+        return minLen == Integer.MAX_VALUE ? "" : s.substring(start, start + minLen);
+    }
+}
